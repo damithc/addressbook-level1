@@ -353,7 +353,21 @@ public class AddressBook {
      */
     private static void setupGivenFileForStorage(String filePath) {
 
-        if (!isValidFilePath(filePath)) {
+        boolean isValidFilePath = false;
+        if (filePath != null) {
+
+
+            Path filePathToValidate;
+            try {
+                filePathToValidate = Paths.get(filePath);
+            Path parentDirectory = filePathToValidate.getParent();
+            isValidFilePath = (parentDirectory == null || Files.isDirectory(parentDirectory)) && filePathToValidate.getFileName().toString().lastIndexOf('.') > 0
+                    && (!Files.exists(filePathToValidate) || Files.isRegularFile(filePathToValidate));
+            } catch (InvalidPathException ipe) {
+
+            }
+        }
+        if (!isValidFilePath) {
             for (String m : new String[]{String.format(MESSAGE_INVALID_FILE, filePath)}) {
                 System.out.println(LINE_PREFIX + m);
             }
@@ -422,26 +436,6 @@ public class AddressBook {
             }
             System.exit(0);
         }
-    }
-
-    /**
-     * Returns true if the given file path is valid.
-     * A file path is valid if it has a valid parent directory as determined by {@link #hasValidParentDirectory}
-     * and a valid file name as determined by {@link #hasValidFileName}.
-     */
-    private static boolean isValidFilePath(String filePath) {
-        if (filePath == null) {
-            return false;
-        }
-        Path filePathToValidate;
-        try {
-            filePathToValidate = Paths.get(filePath);
-        } catch (InvalidPathException ipe) {
-            return false;
-        }
-        Path parentDirectory = filePathToValidate.getParent();
-        return (parentDirectory == null || Files.isDirectory(parentDirectory)) && filePathToValidate.getFileName().toString().lastIndexOf('.') > 0
-                && (!Files.exists(filePathToValidate) || Files.isRegularFile(filePathToValidate));
     }
 
 
