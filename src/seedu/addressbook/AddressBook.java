@@ -55,15 +55,6 @@ public class AddressBook {
      */
     private static final String LS = System.lineSeparator() + LINE_PREFIX;
 
-    /*
-     * NOTE : ==================================================================
-     * These messages shown to the user are defined in one place for convenient
-     * editing and proof reading. Such messages are considered part of the UI
-     * and may be subjected to review by UI experts or technical writers. Note
-     * that Some of the strings below include '%1$s' etc to mark the locations
-     * at which java String.format(...) method can insert values.
-     * =========================================================================
-     */
     private static final String MESSAGE_ADDED = "New person added: %1$s, Phone: %2$s, Email: %3$s";
     private static final String MESSAGE_ADDRESSBOOK_CLEARED = "Address book has been cleared!";
     private static final String MESSAGE_COMMAND_HELP = "%1$s: %2$s";
@@ -167,15 +158,6 @@ public class AddressBook {
      */
     private static final Scanner SCANNER = new Scanner(System.in);
 
-    /*
-     * NOTE : =============================================================================================
-     * Note that the type of the variable below can also be declared as List<String[]>, as follows:
-     *    private static final List<String[]> ALL_PERSONS = new ArrayList<>()
-     * That is because List is an interface implemented by the ArrayList class.
-     * In this code we use ArrayList instead because we wanted to to stay away from advanced concepts
-     * such as interface inheritance.
-     * ====================================================================================================
-     */
 
     /**
      * List of all persons in the address book.
@@ -195,16 +177,6 @@ public class AddressBook {
      */
     private static String storageFilePath;
 
-    /*
-     * NOTE : =============================================================
-     * Notice how this method solves the whole problem at a very high level.
-     * We can understand the high-level logic of the program by reading this
-     * method alone.
-     * If the reader wants a deeper understanding of the solution, she can go
-     * to the next level of abstraction by reading the methods that are
-     * referenced by the high-level method below.
-     * ====================================================================
-     */
 
     public static void main(String[] args) {
         for (String m : new String[]{DIVIDER, DIVIDER, VERSION, MESSAGE_WELCOME, DIVIDER}) {
@@ -415,13 +387,6 @@ public class AddressBook {
         }
     }
 
-
-
-    /*
-     * ===========================================
-     *           COMMAND LOGIC
-     * ===========================================
-     */
 
     /**
      * Executes the command as specified by the {@code userInputString}
