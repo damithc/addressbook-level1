@@ -251,7 +251,60 @@ public class AddressBook {
         Optional<ArrayList<String[]>> returnValue = Optional.empty();;
         boolean isDecodingSuccess = true;
         for (String encodedPerson : lines) {
-            final Optional<String[]> decodedPerson = decodePersonFromString(encodedPerson);
+            Optional<String[]> decodedPersons1 = Optional.empty();
+            boolean isPersonDataPresent = true;
+            // check that we can extract the parts of a person from the encoded string
+            final String matchAnyPersonDataPrefix = PERSON_DATA_PREFIX_PHONE + '|' + PERSON_DATA_PREFIX_EMAIL;
+            final String[] splitArgs = encodedPerson.trim().split(matchAnyPersonDataPrefix);
+            if (!(splitArgs.length == 3 // 3 arguments
+                    && !splitArgs[0].isEmpty() // non-empty arguments
+                    && !splitArgs[1].isEmpty()
+                    && !splitArgs[2].isEmpty())) {
+                isPersonDataPresent = false;
+            }
+            if(isPersonDataPresent) {
+                String result;
+                final int indexOfPhonePrefix = encodedPerson.indexOf(PERSON_DATA_PREFIX_PHONE);
+                final int indexOfEmailPrefix = encodedPerson.indexOf(PERSON_DATA_PREFIX_EMAIL);
+
+                // email is last arg, target is from prefix to end of string
+                if (indexOfEmailPrefix > indexOfPhonePrefix) {
+                    result = encodedPerson.substring(indexOfEmailPrefix, encodedPerson.length()).trim().replace(PERSON_DATA_PREFIX_EMAIL, "");
+
+                    // email is middle arg, target is from own prefix to next prefix
+                } else {
+                    result = encodedPerson.substring(indexOfEmailPrefix, indexOfPhonePrefix).trim().replace(PERSON_DATA_PREFIX_EMAIL, "");
+                }
+                String result1;
+                final int indexOfPhonePrefix1 = encodedPerson.indexOf(PERSON_DATA_PREFIX_PHONE);
+                final int indexOfEmailPrefix1 = encodedPerson.indexOf(PERSON_DATA_PREFIX_EMAIL);
+
+                // phone is last arg, target is from prefix to end of string
+                if (indexOfPhonePrefix1 > indexOfEmailPrefix1) {
+                    result1 = encodedPerson.substring(indexOfPhonePrefix1, encodedPerson.length()).trim().replace(PERSON_DATA_PREFIX_PHONE, "");
+
+                    // phone is middle arg, target is from own prefix to next prefix
+                } else {
+                    result1 = encodedPerson.substring(indexOfPhonePrefix1, indexOfEmailPrefix1).trim().replace(PERSON_DATA_PREFIX_PHONE, "");
+                }
+                final int indexOfPhonePrefix2 = encodedPerson.indexOf(PERSON_DATA_PREFIX_PHONE);
+                final int indexOfEmailPrefix2 = encodedPerson.indexOf(PERSON_DATA_PREFIX_EMAIL);
+                // name is leading substring up to first data prefix symbol
+                int indexOfFirstPrefix = Math.min(indexOfEmailPrefix2, indexOfPhonePrefix2);
+                final String[] person = new String[PERSON_DATA_COUNT];
+                person[PERSON_DATA_INDEX_NAME] = encodedPerson.substring(0, indexOfFirstPrefix).trim();
+                person[PERSON_DATA_INDEX_PHONE] = result1;
+                person[PERSON_DATA_INDEX_EMAIL] = result;
+                final String[] decodedPerson1 = person;
+                // check that the constructed person is valid
+                //TODO: implement a more permissive validation
+                //TODO: implement a more permissive validation
+                //TODO: implement a more permissive validation
+                decodedPersons1 =  decodedPerson1[PERSON_DATA_INDEX_NAME].matches("(\\w|\\s)+")
+                        && decodedPerson1[PERSON_DATA_INDEX_PHONE].matches("\\d+")
+                        && decodedPerson1[PERSON_DATA_INDEX_EMAIL].matches("\\S+@\\S+\\.\\S+") ? Optional.of(decodedPerson1) : Optional.empty();
+            }
+            final Optional<String[]> decodedPerson = decodedPersons1;
             if (!decodedPerson.isPresent()) {
                 isDecodingSuccess = false;
                 break;
@@ -412,7 +465,60 @@ public class AddressBook {
         switch (commandType) {
         case COMMAND_ADD_WORD:
             // try decoding a person from the raw args
-            final Optional<String[]> decodeResult = decodePersonFromString(commandArgs);
+            Optional<String[]> decodedPersons = Optional.empty();
+            boolean isPersonDataPresent = true;
+            // check that we can extract the parts of a person from the encoded string
+            final String matchAnyPersonDataPrefix = PERSON_DATA_PREFIX_PHONE + '|' + PERSON_DATA_PREFIX_EMAIL;
+            final String[] splitArgs = commandArgs.trim().split(matchAnyPersonDataPrefix);
+            if (!(splitArgs.length == 3 // 3 arguments
+                    && !splitArgs[0].isEmpty() // non-empty arguments
+                    && !splitArgs[1].isEmpty()
+                    && !splitArgs[2].isEmpty())) {
+                isPersonDataPresent = false;
+            }
+            if(isPersonDataPresent) {
+                String result11;
+                final int indexOfPhonePrefix = commandArgs.indexOf(PERSON_DATA_PREFIX_PHONE);
+                final int indexOfEmailPrefix = commandArgs.indexOf(PERSON_DATA_PREFIX_EMAIL);
+
+                // email is last arg, target is from prefix to end of string
+                if (indexOfEmailPrefix > indexOfPhonePrefix) {
+                    result11 = commandArgs.substring(indexOfEmailPrefix, commandArgs.length()).trim().replace(PERSON_DATA_PREFIX_EMAIL, "");
+
+                    // email is middle arg, target is from own prefix to next prefix
+                } else {
+                    result11 = commandArgs.substring(indexOfEmailPrefix, indexOfPhonePrefix).trim().replace(PERSON_DATA_PREFIX_EMAIL, "");
+                }
+                String result1;
+                final int indexOfPhonePrefix1 = commandArgs.indexOf(PERSON_DATA_PREFIX_PHONE);
+                final int indexOfEmailPrefix1 = commandArgs.indexOf(PERSON_DATA_PREFIX_EMAIL);
+
+                // phone is last arg, target is from prefix to end of string
+                if (indexOfPhonePrefix1 > indexOfEmailPrefix1) {
+                    result1 = commandArgs.substring(indexOfPhonePrefix1, commandArgs.length()).trim().replace(PERSON_DATA_PREFIX_PHONE, "");
+
+                    // phone is middle arg, target is from own prefix to next prefix
+                } else {
+                    result1 = commandArgs.substring(indexOfPhonePrefix1, indexOfEmailPrefix1).trim().replace(PERSON_DATA_PREFIX_PHONE, "");
+                }
+                final int indexOfPhonePrefix2 = commandArgs.indexOf(PERSON_DATA_PREFIX_PHONE);
+                final int indexOfEmailPrefix2 = commandArgs.indexOf(PERSON_DATA_PREFIX_EMAIL);
+                // name is leading substring up to first data prefix symbol
+                int indexOfFirstPrefix = Math.min(indexOfEmailPrefix2, indexOfPhonePrefix2);
+                final String[] person3 = new String[PERSON_DATA_COUNT];
+                person3[PERSON_DATA_INDEX_NAME] = commandArgs.substring(0, indexOfFirstPrefix).trim();
+                person3[PERSON_DATA_INDEX_PHONE] = result1;
+                person3[PERSON_DATA_INDEX_EMAIL] = result11;
+                final String[] decodedPerson = person3;
+                // check that the constructed person is valid
+                //TODO: implement a more permissive validation
+                //TODO: implement a more permissive validation
+                //TODO: implement a more permissive validation
+                decodedPersons =  decodedPerson[PERSON_DATA_INDEX_NAME].matches("(\\w|\\s)+")
+                        && decodedPerson[PERSON_DATA_INDEX_PHONE].matches("\\d+")
+                        && decodedPerson[PERSON_DATA_INDEX_EMAIL].matches("\\S+@\\S+\\.\\S+") ? Optional.of(decodedPerson) : Optional.empty();
+            }
+            final Optional<String[]> decodeResult = decodedPersons;
 
             // checks if args are valid (decode result will not be present if the person is invalid)
             if (!decodeResult.isPresent()) {
@@ -590,65 +696,6 @@ public class AddressBook {
                         + (String.format(MESSAGE_COMMAND_HELP, COMMAND_HELP_WORD, COMMAND_HELP_DESC)
                         + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_HELP_EXAMPLE)));
         }
-    }
-
-    /**
-     * Decodes a person from it's supposed string representation.
-     *
-     * @param encoded string to be decoded
-     * @return if cannot decode: empty Optional
-     *         else: Optional containing decoded person
-     */
-    private static Optional<String[]> decodePersonFromString(String encoded) {
-        // check that we can extract the parts of a person from the encoded string
-        final String matchAnyPersonDataPrefix = PERSON_DATA_PREFIX_PHONE + '|' + PERSON_DATA_PREFIX_EMAIL;
-        final String[] splitArgs = encoded.trim().split(matchAnyPersonDataPrefix);
-        if (!(splitArgs.length == 3 // 3 arguments
-                && !splitArgs[0].isEmpty() // non-empty arguments
-                && !splitArgs[1].isEmpty()
-                && !splitArgs[2].isEmpty())) {
-            return Optional.empty();
-        }
-        String result;
-        final int indexOfPhonePrefix = encoded.indexOf(PERSON_DATA_PREFIX_PHONE);
-        final int indexOfEmailPrefix = encoded.indexOf(PERSON_DATA_PREFIX_EMAIL);
-
-        // email is last arg, target is from prefix to end of string
-        if (indexOfEmailPrefix > indexOfPhonePrefix) {
-            result = encoded.substring(indexOfEmailPrefix, encoded.length()).trim().replace(PERSON_DATA_PREFIX_EMAIL, "");
-
-            // email is middle arg, target is from own prefix to next prefix
-        } else {
-            result = encoded.substring(indexOfEmailPrefix, indexOfPhonePrefix).trim().replace(PERSON_DATA_PREFIX_EMAIL, "");
-        }
-        String result1;
-        final int indexOfPhonePrefix1 = encoded.indexOf(PERSON_DATA_PREFIX_PHONE);
-        final int indexOfEmailPrefix1 = encoded.indexOf(PERSON_DATA_PREFIX_EMAIL);
-
-        // phone is last arg, target is from prefix to end of string
-        if (indexOfPhonePrefix1 > indexOfEmailPrefix1) {
-            result1 = encoded.substring(indexOfPhonePrefix1, encoded.length()).trim().replace(PERSON_DATA_PREFIX_PHONE, "");
-
-            // phone is middle arg, target is from own prefix to next prefix
-        } else {
-            result1 = encoded.substring(indexOfPhonePrefix1, indexOfEmailPrefix1).trim().replace(PERSON_DATA_PREFIX_PHONE, "");
-        }
-        final int indexOfPhonePrefix2 = encoded.indexOf(PERSON_DATA_PREFIX_PHONE);
-        final int indexOfEmailPrefix2 = encoded.indexOf(PERSON_DATA_PREFIX_EMAIL);
-        // name is leading substring up to first data prefix symbol
-        int indexOfFirstPrefix = Math.min(indexOfEmailPrefix2, indexOfPhonePrefix2);
-        final String[] person = new String[PERSON_DATA_COUNT];
-        person[PERSON_DATA_INDEX_NAME] = encoded.substring(0, indexOfFirstPrefix).trim();
-        person[PERSON_DATA_INDEX_PHONE] = result1;
-        person[PERSON_DATA_INDEX_EMAIL] = result;
-        final String[] decodedPerson = person;
-        // check that the constructed person is valid
-        //TODO: implement a more permissive validation
-        //TODO: implement a more permissive validation
-        //TODO: implement a more permissive validation
-        return decodedPerson[PERSON_DATA_INDEX_NAME].matches("(\\w|\\s)+")
-                && decodedPerson[PERSON_DATA_INDEX_PHONE].matches("\\d+")
-                && decodedPerson[PERSON_DATA_INDEX_EMAIL].matches("\\S+@\\S+\\.\\S+") ? Optional.of(decodedPerson) : Optional.empty();
     }
 
 
