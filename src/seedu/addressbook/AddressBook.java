@@ -225,7 +225,31 @@ public class AddressBook {
         }
 
         if(args.length == 0) {
-            setupDefaultFileForStorage();
+            for (String m : new String[]{MESSAGE_USING_DEFAULT_FILE}) {
+                System.out.println(LINE_PREFIX + m);
+            }
+            storageFilePath = DEFAULT_STORAGE_FILEPATH;
+            final File storageFile = new File(storageFilePath);
+            if (!storageFile.exists()) {
+                for (String m1 : new String[]{String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, storageFilePath)}) {
+                    System.out.println(LINE_PREFIX + m1);
+                }
+
+                try {
+                    storageFile.createNewFile();
+                    for (String m : new String[]{String.format(MESSAGE_STORAGE_FILE_CREATED, storageFilePath)}) {
+                        System.out.println(LINE_PREFIX + m);
+                    }
+                } catch (IOException ioe) {
+                    for (String m : new String[]{String.format(MESSAGE_ERROR_CREATING_STORAGE_FILE, storageFilePath)}) {
+                        System.out.println(LINE_PREFIX + m);
+                    }
+                    for (String m : new String[]{MESSAGE_GOODBYE, DIVIDER, DIVIDER}) {
+                        System.out.println(LINE_PREFIX + m);
+                    }
+                    System.exit(0);
+                }
+            }
         }
         ArrayList<String> lines = null;
         try {
@@ -394,41 +418,6 @@ public class AddressBook {
             }
         } catch (IOException ioe) {
             for (String m : new String[]{String.format(MESSAGE_ERROR_CREATING_STORAGE_FILE, filePath)}) {
-                System.out.println(LINE_PREFIX + m);
-            }
-            for (String m : new String[]{MESSAGE_GOODBYE, DIVIDER, DIVIDER}) {
-                System.out.println(LINE_PREFIX + m);
-            }
-            System.exit(0);
-        }
-    }
-
-    /**
-     * Sets up the storage based on the default file.
-     * Creates file if missing.
-     * Exits program if the file cannot be created.
-     */
-    private static void setupDefaultFileForStorage() {
-        for (String m : new String[]{MESSAGE_USING_DEFAULT_FILE}) {
-            System.out.println(LINE_PREFIX + m);
-        }
-        storageFilePath = DEFAULT_STORAGE_FILEPATH;
-        final File storageFile = new File(storageFilePath);
-        if (storageFile.exists()) {
-            return;
-        }
-
-        for (String m1 : new String[]{String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, storageFilePath)}) {
-            System.out.println(LINE_PREFIX + m1);
-        }
-
-        try {
-            storageFile.createNewFile();
-            for (String m : new String[]{String.format(MESSAGE_STORAGE_FILE_CREATED, storageFilePath)}) {
-                System.out.println(LINE_PREFIX + m);
-            }
-        } catch (IOException ioe) {
-            for (String m : new String[]{String.format(MESSAGE_ERROR_CREATING_STORAGE_FILE, storageFilePath)}) {
                 System.out.println(LINE_PREFIX + m);
             }
             for (String m : new String[]{MESSAGE_GOODBYE, DIVIDER, DIVIDER}) {
