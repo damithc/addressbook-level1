@@ -221,7 +221,54 @@ public class AddressBook {
         }
 
         if (args.length == 1) {
-            setupGivenFileForStorage(args[0]);
+
+            boolean isValidFilePath = false;
+            if (args[0] != null) {
+
+
+                Path filePathToValidate;
+                try {
+                    filePathToValidate = Paths.get(args[0]);
+                Path parentDirectory = filePathToValidate.getParent();
+                isValidFilePath = (parentDirectory == null || Files.isDirectory(parentDirectory)) && filePathToValidate.getFileName().toString().lastIndexOf('.') > 0
+                        && (!Files.exists(filePathToValidate) || Files.isRegularFile(filePathToValidate));
+                } catch (InvalidPathException ipe) {
+
+                }
+            }
+            if (!isValidFilePath) {
+                for (String m : new String[]{String.format(MESSAGE_INVALID_FILE, args[0])}) {
+                    System.out.println(LINE_PREFIX + m);
+                }
+                for (String m : new String[]{MESSAGE_GOODBYE, DIVIDER, DIVIDER}) {
+                    System.out.println(LINE_PREFIX + m);
+                }
+                System.exit(0);
+            }
+
+            storageFilePath = args[0];
+            final File storageFile = new File(args[0]);
+            if (!storageFile.exists()) {
+
+                for (String m1 : new String[]{String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, args[0])}) {
+                    System.out.println(LINE_PREFIX + m1);
+                }
+
+                try {
+                    storageFile.createNewFile();
+                    for (String m : new String[]{String.format(MESSAGE_STORAGE_FILE_CREATED, args[0])}) {
+                        System.out.println(LINE_PREFIX + m);
+                    }
+                } catch (IOException ioe) {
+                    for (String m : new String[]{String.format(MESSAGE_ERROR_CREATING_STORAGE_FILE, args[0])}) {
+                        System.out.println(LINE_PREFIX + m);
+                    }
+                    for (String m : new String[]{MESSAGE_GOODBYE, DIVIDER, DIVIDER}) {
+                        System.out.println(LINE_PREFIX + m);
+                    }
+                    System.exit(0);
+                }
+            }
         }
 
         if(args.length == 0) {
@@ -368,64 +415,6 @@ public class AddressBook {
         }
     }
 
-
-
-    /**
-     * Sets up the storage file based on the supplied file path.
-     * Creates the file if it is missing.
-     * Exits if the file name is not acceptable.
-     */
-    private static void setupGivenFileForStorage(String filePath) {
-
-        boolean isValidFilePath = false;
-        if (filePath != null) {
-
-
-            Path filePathToValidate;
-            try {
-                filePathToValidate = Paths.get(filePath);
-            Path parentDirectory = filePathToValidate.getParent();
-            isValidFilePath = (parentDirectory == null || Files.isDirectory(parentDirectory)) && filePathToValidate.getFileName().toString().lastIndexOf('.') > 0
-                    && (!Files.exists(filePathToValidate) || Files.isRegularFile(filePathToValidate));
-            } catch (InvalidPathException ipe) {
-
-            }
-        }
-        if (!isValidFilePath) {
-            for (String m : new String[]{String.format(MESSAGE_INVALID_FILE, filePath)}) {
-                System.out.println(LINE_PREFIX + m);
-            }
-            for (String m : new String[]{MESSAGE_GOODBYE, DIVIDER, DIVIDER}) {
-                System.out.println(LINE_PREFIX + m);
-            }
-            System.exit(0);
-        }
-
-        storageFilePath = filePath;
-        final File storageFile = new File(filePath);
-        if (storageFile.exists()) {
-            return;
-        }
-
-        for (String m1 : new String[]{String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, filePath)}) {
-            System.out.println(LINE_PREFIX + m1);
-        }
-
-        try {
-            storageFile.createNewFile();
-            for (String m : new String[]{String.format(MESSAGE_STORAGE_FILE_CREATED, filePath)}) {
-                System.out.println(LINE_PREFIX + m);
-            }
-        } catch (IOException ioe) {
-            for (String m : new String[]{String.format(MESSAGE_ERROR_CREATING_STORAGE_FILE, filePath)}) {
-                System.out.println(LINE_PREFIX + m);
-            }
-            for (String m : new String[]{MESSAGE_GOODBYE, DIVIDER, DIVIDER}) {
-                System.out.println(LINE_PREFIX + m);
-            }
-            System.exit(0);
-        }
-    }
 
 
     /*
